@@ -11,6 +11,14 @@ lazy val sharedSettings = Seq(
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.6.7",
     "org.typelevel" %% "cats-core" % "1.4.0"
+  ),
+  scalacOptions ++= Seq(
+    "-Xlint",
+    "-unchecked",
+    "-deprecation",
+    "-feature",
+    "-Ypartial-unification",
+    "-language:higherKinds"
   )
 )
 
@@ -28,6 +36,7 @@ lazy val jsSettings = Seq(
     "org.webjars.npm" % "react-dom" % "16.5.1" / "umd/react-dom.development.js" minified "umd/react-dom.production.min.js" dependsOn "umd/react.development.js" commonJSName "ReactDOM",
     "org.webjars.npm" % "react-dom" % "16.5.1" / "umd/react-dom-server.browser.development.js" minified "umd/react-dom-server.browser.production.min.js" dependsOn "umd/react-dom.development.js" commonJSName "ReactDOMServer"
   ),
+  jsEnv in Test := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
   skip in packageJSDependencies := false,
   fastOptJSDev := {
     // resources

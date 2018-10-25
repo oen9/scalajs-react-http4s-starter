@@ -1,8 +1,9 @@
 package example
 
-import cats.effect.{ContextShift, Effect, Sync}
-import org.http4s.{HttpRoutes, Request, StaticFile}
+import cats.effect.{ContextShift, Effect}
 import org.http4s.dsl.Http4sDsl
+import org.http4s.{HttpRoutes, Request, StaticFile}
+
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 
 class StaticEndpoints[F[_] : ContextShift : Effect](blockingEc: ExecutionContextExecutorService) extends Http4sDsl[F] {
