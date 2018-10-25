@@ -70,7 +70,8 @@ lazy val jvmSettings = Seq(
     "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
     "ch.qos.logback" % "logback-classic" % LogbackVersion,
     "io.circe" %% "circe-generic" % "0.10.0",
-    "io.circe" %% "circe-literal" % "0.10.0"
+    "io.circe" %% "circe-literal" % "0.10.0",
+    "com.github.pureconfig" %% "pureconfig" % "0.9.2"
   ),
   target := baseDirectory.value / ".." / "target"
 )

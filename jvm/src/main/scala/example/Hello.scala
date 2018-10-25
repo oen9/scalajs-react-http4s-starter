@@ -4,6 +4,7 @@ import java.util.concurrent.Executors
 
 import cats.effect._
 import cats.implicits._
+import example.config.AppConfig
 import org.http4s.server.blaze.BlazeBuilder
 
 import scala.concurrent.ExecutionContext
@@ -15,16 +16,17 @@ object Hello extends IOApp {
   }
 
   def createServer[F[_] : ContextShift : ConcurrentEffect](): F[ExitCode] = {
-    val blockingEc = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(4))
-    val staticEndpoints = StaticEndpoints[F](blockingEc)
-
-    BlazeBuilder[F]
-      .bindHttp(8080, "0.0.0.0")
-      .mountService(staticEndpoints.endpoints(), "/")
-      .serve
-      .compile
-      .drain
-      .as(ExitCode.Success)
+    for {
+      conf <- AppConfig.read()
+      blockingEc = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(4))
+      staticEndpoints = StaticEndpoints[F](blockingEc)
+      exitCode <- BlazeBuilder[F]
+        .bindHttp(conf.http.port, conf.http.host)
+        .mountService(staticEndpoints.endpoints(), "/")
+        .serve
+        .compile
+        .drain
+        .as(ExitCode.Success)
+    } yield exitCode
   }
 }
-
