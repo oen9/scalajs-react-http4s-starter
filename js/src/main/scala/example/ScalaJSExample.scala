@@ -1,6 +1,7 @@
 package example
 
 import example.modules.{About, Home, Layout}
+import example.services.AppCircuit
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.html
@@ -17,11 +18,13 @@ object ScalaJSExample {
   @JSExport
   def main(target: html.Div): Unit = {
 
+    val homeWrapper = AppCircuit.connect(_.clicks)
+
     val routerConfig = RouterConfigDsl[Loc].buildConfig { dsl =>
       import dsl._
 
       (emptyRule
-        | staticRoute(root, HomeLoc) ~> render(Home())
+        | staticRoute(root, HomeLoc) ~> render(homeWrapper(Home(_)))
         | staticRoute("#about", AboutLoc) ~> render(About())
         )
         .notFound(redirectToPage(HomeLoc)(Redirect.Replace))
