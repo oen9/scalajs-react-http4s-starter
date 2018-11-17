@@ -1,13 +1,12 @@
-val Http4sVersion = "0.19.0"
+val Http4sVersion = "0.20.0-M3"
 val LogbackVersion = "1.2.3"
 
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "oen",
-  scalaVersion := "2.12.7",
+  scalaVersion := "2.12.6", // react router doesn't work with 2.12.7
   version := "0.1.0-SNAPSHOT",
-  scalacOptions += "-Ypartial-unification",
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.6.7",
     "org.typelevel" %% "cats-core" % "1.4.0"

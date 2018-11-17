@@ -15,7 +15,7 @@ object Hello extends IOApp {
     createServer[IO]()
   }
 
-  def createServer[F[_] : ContextShift : ConcurrentEffect](): F[ExitCode] = {
+  def createServer[F[_] : ContextShift : ConcurrentEffect : Timer](): F[ExitCode] = {
     for {
       conf <- AppConfig.read()
       blockingEc = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(4))
