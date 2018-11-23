@@ -18,7 +18,6 @@ class StaticEndpoints[F[_] : ContextShift : Effect](blockingEc: ExecutionContext
       static(path, blockingEc, request)
     case request@GET -> "front-res" /: path =>
       val fullPath = "front-res/" + path.toList.mkString("/")
-      println(fullPath)
       static(fullPath, blockingEc, request)
   }
 }
