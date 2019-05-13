@@ -3,6 +3,7 @@ package example.config
 import cats.effect.Sync
 import cats.implicits._
 import pureconfig.error.ConfigReaderFailures
+import pureconfig.generic.auto._
 
 class AppConfigException(failures: ConfigReaderFailures) extends RuntimeException(failures.toList.mkString(" "))
 

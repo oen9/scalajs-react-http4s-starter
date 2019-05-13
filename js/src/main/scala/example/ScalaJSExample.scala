@@ -3,7 +3,6 @@ package example
 import example.modules.{About, Home, Layout}
 import example.services.AppCircuit
 import japgolly.scalajs.react.extra.router._
-import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.html
 
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}

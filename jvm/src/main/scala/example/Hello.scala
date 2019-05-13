@@ -5,7 +5,8 @@ import java.util.concurrent.Executors
 import cats.effect._
 import cats.implicits._
 import example.config.AppConfig
-import org.http4s.server.blaze.BlazeBuilder
+import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.implicits._
 
 import scala.concurrent.ExecutionContext
 
@@ -20,9 +21,10 @@ object Hello extends IOApp {
       conf <- AppConfig.read()
       blockingEc = ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(4))
       staticEndpoints = StaticEndpoints[F](blockingEc)
-      exitCode <- BlazeBuilder[F]
+      httpApp = staticEndpoints.endpoints().orNotFound
+      exitCode <- BlazeServerBuilder[F]
         .bindHttp(conf.http.port, conf.http.host)
-        .mountService(staticEndpoints.endpoints(), "/")
+        .withHttpApp(httpApp)
         .serve
         .compile
         .drain
