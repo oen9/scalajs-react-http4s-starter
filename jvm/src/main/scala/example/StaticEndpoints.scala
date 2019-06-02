@@ -14,7 +14,7 @@ class StaticEndpoints[F[_] : ContextShift : Effect](blockingEc: ExecutionContext
   def endpoints(): HttpRoutes[F] = HttpRoutes.of[F] {
     case request@GET -> Root =>
       static("index.html", blockingEc, request)
-    case request@GET -> Root / path if List(".js", ".css", ".map", ".html").exists(path.endsWith) =>
+    case request@GET -> Root / path if List(".js", ".css", ".map", ".html", ".ico").exists(path.endsWith) =>
       static(path, blockingEc, request)
     case request@GET -> "front-res" /: path =>
       val fullPath = "front-res/" + path.toList.mkString("/")
