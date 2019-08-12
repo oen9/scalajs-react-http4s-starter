@@ -1,15 +1,21 @@
-val Http4sVersion = "0.20.0"
+val Http4sVersion = "0.20.9"
 val LogbackVersion = "1.2.3"
 
 import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "oen",
-  scalaVersion := "2.12.8", // react router doesn't work with 2.12.7
+  scalaVersion := "2.12.9", // react router doesn't work with 2.12.7
   version := "0.1.0-SNAPSHOT",
   libraryDependencies ++= Seq(
-    "com.lihaoyi" %%% "scalatags" % "0.6.8",
-    "org.typelevel" %% "cats-core" % "1.6.0"
+    "com.lihaoyi" %%% "scalatags" % "0.7.0",
+    "org.typelevel" %% "cats-core" % "1.6.1",
+    "io.circe" %%% "circe-generic" % "0.11.1",
+    "io.circe" %%% "circe-literal" % "0.11.1",
+    "io.circe" %%% "circe-generic-extras" % "0.11.1",
+    "io.circe" %%% "circe-parser" % "0.11.1",
+    "io.scalaland" %%% "chimney" % "0.3.2",
+    "com.softwaremill.quicklens" %%% "quicklens" % "1.4.12"
   ),
   scalacOptions ++= Seq(
     "-Xlint",
@@ -64,14 +70,12 @@ lazy val jsSettings = Seq(
 
 lazy val jvmSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-effect" % "1.3.0",
+    "org.typelevel" %% "cats-effect" % "1.4.0",
     "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
     "org.http4s" %% "http4s-circe" % Http4sVersion,
     "org.http4s" %% "http4s-dsl" % Http4sVersion,
     "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
     "ch.qos.logback" % "logback-classic" % LogbackVersion,
-    "io.circe" %% "circe-generic" % "0.11.1",
-    "io.circe" %% "circe-literal" % "0.11.1",
     "com.github.pureconfig" %% "pureconfig" % "0.11.0"
   ),
   target := baseDirectory.value / ".." / "target"
@@ -89,10 +93,13 @@ lazy val appJS = app.js
   .disablePlugins(RevolverPlugin)
 
 lazy val appJVM = app.jvm
-  .enablePlugins(JavaAppPackaging).settings(
-  (resources in Compile) += (fullOptJS in(appJS, Compile)).value.data,
-  (resources in Compile) += (packageMinifiedJSDependencies in(appJS, Compile)).value,
-  (unmanagedResourceDirectories in Compile) += (resourceDirectory in(appJS, Compile)).value
-)
+  .enablePlugins(JavaAppPackaging)
+  .settings(
+    dockerExposedPorts := Seq(8080),
+    dockerBaseImage := "oracle/graalvm-ce:19.1.1",
+    (resources in Compile) += (fullOptJS in(appJS, Compile)).value.data,
+    (resources in Compile) += (packageMinifiedJSDependencies in(appJS, Compile)).value,
+    (unmanagedResourceDirectories in Compile) += (resourceDirectory in(appJS, Compile)).value
+  )
 
 disablePlugins(RevolverPlugin)

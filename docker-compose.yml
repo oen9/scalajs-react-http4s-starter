@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  # as docker image
+  # sbt docker:stage
+  # docker-compose build
+  # docker-compose up -d web
+  # webimg:
+  #   build: ./target/docker/stage/
+  #   ports:
+  #     - "8080:8080"
+  #   env_file:
+  #     - /etc/environment
+
+  # without own image
+  # sbt stage
+  # docker-compose up -d web
+  web:
+    image: oracle/graalvm-ce:19.1.1
+    ports:
+      - 8080:8080
+      - 8000:8000
+    # env_file:
+    #   - /etc/environment
+    environment:
+      JAVA_OPTS: "-Xdebug -Xrunjdwp:server=y,transport=dt_socket,suspend=n,address=8000"
+    volumes:
+    - ./target/universal/stage/:/home/app
+    command: /home/app/bin/app
