@@ -41,7 +41,7 @@ lazy val jsSettings = Seq(
     "react" -> "16.9.0",
     "react-dom" -> "16.9.0",
   ),
-  webpackBundlingMode := BundlingMode.LibraryAndApplication(),
+  webpackBundlingMode := BundlingMode.LibraryAndApplication(), // LibraryOnly() for faster dev builds
   scalaJSUseMainModuleInitializer := true,
   fastOptJSDev := {
     // resources
