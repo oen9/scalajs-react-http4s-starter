@@ -5,7 +5,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "oen",
-  scalaVersion := "2.12.9", // react router doesn't work with 2.12.7
+  scalaVersion := "2.12.9",
   version := "0.1.0-SNAPSHOT",
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.7.0",
@@ -37,34 +37,24 @@ lazy val jsSettings = Seq(
     "io.suzaku" %%% "diode" % "1.1.5",
     "io.suzaku" %%% "diode-react" % "1.1.5.142"
   ),
-  dependencyOverrides += "org.webjars.npm" % "js-tokens" % "3.0.2", // just to resolve bug with version-range
-  jsDependencies ++= Seq(
-    "org.webjars.npm" % "react" % "16.8.5" / "umd/react.development.js" minified "umd/react.production.min.js" commonJSName "React",
-    "org.webjars.npm" % "react-dom" % "16.8.5" / "umd/react-dom.development.js" minified "umd/react-dom.production.min.js" dependsOn "umd/react.development.js" commonJSName "ReactDOM",
-    "org.webjars.npm" % "react-dom" % "16.8.5" / "umd/react-dom-server.browser.development.js" minified "umd/react-dom-server.browser.production.min.js" dependsOn "umd/react-dom.development.js" commonJSName "ReactDOMServer"
+  npmDependencies in Compile ++= Seq(
+    "react" -> "16.9.0",
+    "react-dom" -> "16.9.0",
   ),
-  jsEnv in Test := new org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv,
-  skip in packageJSDependencies := false,
+  webpackBundlingMode := BundlingMode.LibraryAndApplication(),
+  scalaJSUseMainModuleInitializer := true,
   fastOptJSDev := {
     // resources
     val targetRes = "../target/scala-2.12/classes/"
     IO.copyDirectory((resourceDirectory in Compile).value, new File(baseDirectory.value, targetRes))
 
-    // fastopt.js
-    val fastOptFrom = (fastOptJS in Compile).value.data
-    val fastOptTo = new File(baseDirectory.value, targetRes + fastOptFrom.name)
-    IO.copyFile(fastOptFrom, fastOptTo)
-
-    // fastopt.js.map
-    val mapFileName = fastOptFrom.name + ".map"
-    val fastOptMapFrom = fastOptFrom.getParentFile / mapFileName
-    val fastOptMapTo = new File(baseDirectory.value, targetRes + mapFileName)
-    IO.copyFile(fastOptMapFrom, fastOptMapTo)
-
-    // jsdeps.js
-    val jsdepsFile = (packageJSDependencies in Compile).value
-    val jsdepsTo = new File(baseDirectory.value, targetRes + jsdepsFile.name)
-    IO.copyFile(jsdepsFile, jsdepsTo)
+    // webpack
+    val webpackFiles = webpack.in(Compile, fastOptJS).value.map(_.data)
+    val targetBoundle = targetRes + "scalajs-bundler/main/"
+    webpackFiles.foreach { f =>
+      val targetFile = new File(baseDirectory.value, targetBoundle + f.name)
+      IO.copyFile(f, targetFile)
+    }
   }
 )
 
@@ -90,6 +80,7 @@ lazy val app =
 
 lazy val appJS = app.js
   .enablePlugins(WorkbenchPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin)
   .disablePlugins(RevolverPlugin)
 
 lazy val appJVM = app.jvm
@@ -97,8 +88,7 @@ lazy val appJVM = app.jvm
   .settings(
     dockerExposedPorts := Seq(8080),
     dockerBaseImage := "oracle/graalvm-ce:19.1.1",
-    (resources in Compile) += (fullOptJS in(appJS, Compile)).value.data,
-    (resources in Compile) += (packageMinifiedJSDependencies in(appJS, Compile)).value,
+    (resources in Compile) ++= webpack.in(Compile, fullOptJS).in(appJS, Compile).value.map(_.data),
     (unmanagedResourceDirectories in Compile) += (resourceDirectory in(appJS, Compile)).value
   )
 

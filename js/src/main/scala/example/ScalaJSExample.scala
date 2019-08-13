@@ -3,19 +3,16 @@ package example
 import example.modules.{About, Home, Layout}
 import example.services.AppCircuit
 import japgolly.scalajs.react.extra.router._
-import org.scalajs.dom.html
+import org.scalajs.dom.document
 
-import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
-
-@JSExportTopLevel("ScalaJSExample")
 object ScalaJSExample {
 
   sealed trait Loc
   case object HomeLoc extends Loc
   case object AboutLoc extends Loc
 
-  @JSExport
-  def main(target: html.Div): Unit = {
+  def main(args: Array[String]): Unit = {
+    val target = document.getElementById("main")
 
     val homeWrapper = AppCircuit.connect(_.clicks)
 

@@ -16,6 +16,9 @@ class StaticEndpoints[F[_] : ContextShift : Effect](blockingEc: ExecutionContext
       static("index.html", blockingEc, request)
     case request@GET -> Root / path if List(".js", ".css", ".map", ".html", ".ico").exists(path.endsWith) =>
       static(path, blockingEc, request)
+    case request@GET -> Root / "scalajs-bundler" / "main" / path if List(".js", ".map").exists(path.endsWith) =>
+      val fullPath = "scalajs-bundler/main/" + path
+      static(fullPath, blockingEc, request)
     case request@GET -> "front-res" /: path =>
       val fullPath = "front-res/" + path.toList.mkString("/")
       static(fullPath, blockingEc, request)
