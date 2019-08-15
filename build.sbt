@@ -38,6 +38,7 @@ lazy val jsSettings = Seq(
   npmDependencies in Compile ++= Seq(
     "react" -> "16.7.0",
     "react-dom" -> "16.7.0",
+    "purecss" -> "1.0.1"
   ),
   webpackBundlingMode := BundlingMode.LibraryAndApplication(), // LibraryOnly() for faster dev builds
   scalaJSUseMainModuleInitializer := true,
@@ -78,7 +79,8 @@ lazy val appJVM = app.jvm
       f.data -> s"assets/${f.data.getName()}"
     },
     mappings.in(Universal) ++= Seq(
-      // (target in(appJS, Compile)).value / ("scala-" + scalaBinaryVersion.value) / "scalajs-bundler" / "main" / "node_modules" / "bootstrap" / "dist" / "css" / "bootstrap.min.css" -> "assets/bootstrap.min.css"
+      (target in(appJS, Compile)).value / ("scala-" + scalaBinaryVersion.value) / "scalajs-bundler" / "main" / "node_modules" / "purecss" / "build" / "pure-min.css" -> "assets/pure-min.css",
+      (target in(appJS, Compile)).value / ("scala-" + scalaBinaryVersion.value) / "scalajs-bundler" / "main" / "node_modules" / "purecss" / "build" / "grids-responsive-min.css" -> "assets/grids-responsive-min.css"
     ),
     bashScriptExtraDefines += """addJava "-Dassets=${app_home}/../assets""""
   )
