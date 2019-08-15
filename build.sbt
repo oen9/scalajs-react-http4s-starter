@@ -42,6 +42,7 @@ lazy val jsSettings = Seq(
   ),
   webpackBundlingMode := BundlingMode.LibraryAndApplication(), // LibraryOnly() for faster dev builds
   scalaJSUseMainModuleInitializer := true,
+  localUrl := ("0.0.0.0", 12345)
 )
 
 lazy val jvmSettings = Seq(
