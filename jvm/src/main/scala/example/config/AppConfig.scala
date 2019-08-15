@@ -8,7 +8,7 @@ import pureconfig.generic.auto._
 class AppConfigException(failures: ConfigReaderFailures) extends RuntimeException(failures.toList.mkString(" "))
 
 case class Http(port: Int, host: String)
-case class AppConfig(http: Http)
+case class AppConfig(http: Http, assets: String)
 
 object AppConfig {
   def read[F[_] : Sync](): F[AppConfig] = {

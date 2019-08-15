@@ -2,8 +2,8 @@
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
-    "react": "16.9.0",
-    "react-dom": "16.9.0"
+    "react": "16.7.0",
+    "react-dom": "16.7.0"
   },
   "devDependencies": {
     "webpack": "3.5.5",

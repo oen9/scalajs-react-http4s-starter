@@ -16,19 +16,22 @@
 
 # DEV
 
-## js without server
-fastOptJS::webpack\
-~fastOptJS
-
+## js
+`fastOptJS::webpack`\
+`~fastOptJS`\
 http://localhost:12345/js/target/scala-2.12/classes/index-dev.html
 
-## server with js
-reStart\
-~fastOptJSDev
-
-http://localhost:8080/index-dev.html
-
-## server without js
-reStart
-
+## server
+`reStart`\
 http://localhost:8080/
+
+## js + server (dev conf)
+Run server normally `reStart`.\
+Connect your js api to http://localhost:8080 (e.g. change some baseUrl in js project).\
+Run js: `fastOptJS::webpack` and `fastOptJS`.\
+Open http://localhost:12345/js/target/scala-2.12/classes/index-dev.html in browser.\
+When server changed run `reStart`.\
+When js changed run `fastOptJS`.
+
+## hints
+Remember to run `fastOptJS::webpack` after e.g. `npmDependencies` changes.

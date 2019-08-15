@@ -32,7 +32,7 @@ object Layout {
           )
         ),
         <.div(^.cls := "content-wrapper",
-          props.resolution.render(),
+          <.div(props.resolution.render()),
           <.div(^.cls := "footer l-box is-center",
             "footer"
           )

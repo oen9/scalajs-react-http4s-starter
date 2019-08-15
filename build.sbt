@@ -5,7 +5,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "oen",
-  scalaVersion := "2.12.9",
+  scalaVersion := "2.12.8",
   version := "0.1.0-SNAPSHOT",
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.7.0",
@@ -27,8 +27,6 @@ lazy val sharedSettings = Seq(
   )
 )
 
-lazy val fastOptJSDev = TaskKey[Unit]("fastOptJSDev")
-
 lazy val jsSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-js" %%% "scalajs-dom" % "0.9.7",
@@ -38,24 +36,11 @@ lazy val jsSettings = Seq(
     "io.suzaku" %%% "diode-react" % "1.1.5.142"
   ),
   npmDependencies in Compile ++= Seq(
-    "react" -> "16.9.0",
-    "react-dom" -> "16.9.0",
+    "react" -> "16.7.0",
+    "react-dom" -> "16.7.0",
   ),
   webpackBundlingMode := BundlingMode.LibraryAndApplication(), // LibraryOnly() for faster dev builds
   scalaJSUseMainModuleInitializer := true,
-  fastOptJSDev := {
-    // resources
-    val targetRes = "../target/scala-2.12/classes/"
-    IO.copyDirectory((resourceDirectory in Compile).value, new File(baseDirectory.value, targetRes))
-
-    // webpack
-    val webpackFiles = webpack.in(Compile, fastOptJS).value.map(_.data)
-    val targetBoundle = targetRes + "scalajs-bundler/main/"
-    webpackFiles.foreach { f =>
-      val targetFile = new File(baseDirectory.value, targetBoundle + f.name)
-      IO.copyFile(f, targetFile)
-    }
-  }
 )
 
 lazy val jvmSettings = Seq(
@@ -88,8 +73,14 @@ lazy val appJVM = app.jvm
   .settings(
     dockerExposedPorts := Seq(8080),
     dockerBaseImage := "oracle/graalvm-ce:19.1.1",
-    (resources in Compile) ++= webpack.in(Compile, fullOptJS).in(appJS, Compile).value.map(_.data),
-    (unmanagedResourceDirectories in Compile) += (resourceDirectory in(appJS, Compile)).value
+    (unmanagedResourceDirectories in Compile) += (resourceDirectory in(appJS, Compile)).value,
+    mappings.in(Universal) ++= webpack.in(Compile, fullOptJS).in(appJS, Compile).value.map { f =>
+      f.data -> s"assets/${f.data.getName()}"
+    },
+    mappings.in(Universal) ++= Seq(
+      // (target in(appJS, Compile)).value / ("scala-" + scalaBinaryVersion.value) / "scalajs-bundler" / "main" / "node_modules" / "bootstrap" / "dist" / "css" / "bootstrap.min.css" -> "assets/bootstrap.min.css"
+    ),
+    bashScriptExtraDefines += """addJava "-Dassets=${app_home}/../assets""""
   )
 
 disablePlugins(RevolverPlugin)
