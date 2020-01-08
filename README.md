@@ -11,7 +11,8 @@
 
 ## frontend
 1. scalajs
-1. reactjs
+1. reactjs\
+  [scalajs-slinky-http4s-starter](https://github.com/oen9/scalajs-slinky-http4s-starter) for `slinky`
 1. diode
 
 # DEV
