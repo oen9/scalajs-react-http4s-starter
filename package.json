@@ -7,7 +7,7 @@
     "react-dom": "16.7.0"
   },
   "devDependencies": {
-    "webpack": "3.5.5",
+    "webpack": "5.94.0",
     "webpack-dev-server": "2.11.1",
     "source-map-loader": "0.2.1",
     "concat-with-sourcemaps": "1.0.7"
